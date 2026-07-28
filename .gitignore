@@ -1,14 +1,17 @@
 # Compiled Java artifacts
 *.class
 *.jar
+!gradle/wrapper/gradle-wrapper.jar
 *.war
 *.ear
 
 # Build output
 /out/
 /build/
+**/build/
 /target/
 /bin/
+jmh-result.*
 
 # Keep source folders named out/bin if they ever exist
 !**/src/main/**/out/
