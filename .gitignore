@@ -1,19 +1,38 @@
-### IntelliJ IDEA ###
-out/
+# Compiled Java artifacts
+*.class
+*.jar
+*.war
+*.ear
+
+# Build output
+/out/
+/build/
+/target/
+/bin/
+
+# Keep source folders named out/bin if they ever exist
 !**/src/main/**/out/
 !**/src/test/**/out/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
 
-# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
-# Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
+# Gradle
+.gradle/
 
-# User-specific stuff:
+# Maven
+dependency-reduced-pom.xml
+
+# IntelliJ IDEA user-specific files
 .idea/workspace.xml
 .idea/tasks.xml
-.idea/dictionaries
+.idea/shelf/
+.idea/httpRequests/
+.idea/dictionaries/
 .idea/vcs.xml
 .idea/jsLibraryMappings.xml
 
-# Sensitive or high-churn files:
+# IntelliJ IDEA generated/local data
+.idea/dataSources/
 .idea/dataSources.ids
 .idea/dataSources.xml
 .idea/dataSources.local.xml
@@ -21,27 +40,30 @@ out/
 .idea/dynamic.xml
 .idea/uiDesigner.xml
 
-### Eclipse ###
-.apt_generated
+# Eclipse
+.apt_generated/
+.apt_generated_tests/
 .classpath
 .factorypath
 .project
-.settings
+.settings/
 .springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
+.sts4-cache/
 
-### NetBeans ###
+# NetBeans
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
 
-### VS Code ###
+# VS Code
 .vscode/
 
-### Mac OS ###
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+
+# macOS
 .DS_Store
