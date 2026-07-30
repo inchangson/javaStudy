@@ -1,0 +1,4 @@
+tasks.withType(Test).configureEach {
+    // OpenJDK implementation observations in the hashmap lesson only.
+    jvmArgs '--add-opens=java.base/java.util=ALL-UNNAMED'
+}

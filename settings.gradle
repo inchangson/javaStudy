@@ -16,3 +16,5 @@ rootProject.name = 'java-study'
 
 include 'topics:oop'
 include 'topics:virtual-thread'
+
+include 'topics:map-storage'
