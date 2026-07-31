@@ -6,12 +6,41 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class HashMapDemoTest {
     @Test void collisionDoesNotMeanEquality() {
-        var map = new HashMap<HashMapDemo.CollisionKey, String>();
-        map.put(new HashMapDemo.CollisionKey(1), "a");
-        map.put(new HashMapDemo.CollisionKey(2), "b");
-        assertEquals("a", map.put(new HashMapDemo.CollisionKey(1), "c"));
+        var map = new HashMap<HashMapDemo.HashCodeCollisionKey, String>();
+        map.put(new HashMapDemo.HashCodeCollisionKey(1), "a");
+        map.put(new HashMapDemo.HashCodeCollisionKey(2), "b");
+        assertEquals("a", map.put(new HashMapDemo.HashCodeCollisionKey(1), "c"));
         assertEquals(2, map.size());
-        assertEquals("b", map.get(new HashMapDemo.CollisionKey(2)));
+        assertEquals("b", map.get(new HashMapDemo.HashCodeCollisionKey(2)));
+    }
+
+    @Test void equalKeysWithDifferentHashesSkipEqualityEvenInSameBucket() throws Exception {
+        var first = new HashMapDemo.EqualsCollisionKey(1, 1);
+        var second = new HashMapDemo.EqualsCollisionKey(1, 17);
+        assertEquals(first, second); // This key intentionally breaks the contract.
+        assertNotEquals(first.hashCode(), second.hashCode());
+        var map = new HashMap<HashMapDemo.EqualsCollisionKey, String>();
+        map.put(first, "first");
+        assertNull(map.put(second, "second"));
+        assertEquals(16, table(map).length);
+        assertEquals((16 - 1) & first.hashCode(), (16 - 1) & second.hashCode());
+        assertEquals(2, map.size()); // OpenJDK observation, not a valid-key API guarantee.
+        assertEquals("first", map.get(new HashMapDemo.EqualsCollisionKey(1, 1)));
+        assertEquals("second", map.get(new HashMapDemo.EqualsCollisionKey(1, 17)));
+    }
+
+    @Test void sameHashAndEqualKeyReplaceValueAndRetainOriginalKeyReference() {
+        var first = new HashMapDemo.HashCodeEqualsCollisionKey(1);
+        var second = new HashMapDemo.HashCodeEqualsCollisionKey(1);
+        assertNotSame(first, second);
+        assertEquals(first, second);
+        assertEquals(first.hashCode(), second.hashCode());
+        var map = new HashMap<HashMapDemo.HashCodeEqualsCollisionKey, String>();
+        map.put(first, "first");
+        assertEquals("first", map.put(second, "updated"));
+        assertEquals(1, map.size());
+        assertEquals("updated", map.get(second));
+        assertSame(first, map.keySet().iterator().next());
     }
 
     @Test void changingHashMakesEvenSameInstanceUnfindable() {
@@ -36,10 +65,10 @@ class HashMapDemoTest {
     }
 
     @Test void longCollisionChainTreeifiesWhenTableIsLargeEnough() throws Exception {
-        var map = new HashMap<HashMapDemo.CollisionKey, Integer>(64);
-        for (int i = 0; i < 9; i++) map.put(new HashMapDemo.CollisionKey(i), i);
+        var map = new HashMap<HashMapDemo.HashCodeCollisionKey, Integer>(64);
+        for (int i = 0; i < 9; i++) map.put(new HashMapDemo.HashCodeCollisionKey(i), i);
         assertEquals("java.util.HashMap$TreeNode", table(map)[7].getClass().getName());
-        for (int i = 0; i < 9; i++) assertEquals(i, map.get(new HashMapDemo.CollisionKey(i)));
+        for (int i = 0; i < 9; i++) assertEquals(i, map.get(new HashMapDemo.HashCodeCollisionKey(i)));
     }
 
     private Object[] table(HashMap<?, ?> map) throws Exception {
