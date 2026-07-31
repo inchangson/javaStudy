@@ -11,6 +11,37 @@ Java 21. 각 소주제 커밋에서 해당 패키지의 README와 테스트를 �
 | 5 | `storage.atomic` | 두 키의 변경·관찰·실패를 어떻게 묶을까? |
 | 6 | `storage.recovery` | 프로세스가 종료돼도 커밋을 어떻게 복구할까? |
 
+## 이 과정을 공부하는 목적: 캐시에서 RDB 트랜잭션까지
+
+이 과정은 메모리 Map에 요구사항을 하나씩 추가하며 “지금 구현이 무엇을 보장하지 못하는가”를
+확인한다. 캐시 구현을 그대로 RDB로 바꾸는 과정은 아니다. 마지막에는 작은 저장소의
+원자성·격리·복구 실험을 실제 RDB의 트랜잭션과 비교한다.
+
+```text
+키로 값을 찾는다 (HashMap)
+  → 여러 스레드가 함께 바꾼다 (concurrency)
+  → 보관할 양과 시간을 제한한다 (LRU, Caffeine)
+  → 여러 키의 성공·실패와 관찰을 묶는다 (storage.atomic)
+  → 프로세스가 종료돼도 커밋을 복구한다 (storage.recovery)
+  → RDB의 트랜잭션·격리 수준·WAL과 비교한다
+```
+
+| HashMap에서 배운 내용 | 다음 공부와 연결되는 이유 | 이어서 읽기 |
+| --- | --- | --- |
+| 키의 동등성과 가변 키 문제 | 같은 요청은 같은 캐시 키로, 다른 데이터는 다른 키로 표현해야 한다. 삽입 뒤 키 변경은 조회·무효화를 깨뜨릴 수 있다. | [HashMap의 캐시 키 예제](src/main/java/mapstorage/hashmap/README.md#9-캐시와-트랜잭션으로-가져갈-네-가지) |
+| 해시 분산과 충돌 | 키 계약이 맞아도 편중된 hash는 조회 비용을 늘린다. 충돌 처리와 캐시 퇴출 정책은 다른 문제다. | [캐시의 책임](src/main/java/mapstorage/cache/README.md) |
+| 메모리에 키·값 저장 | 원본에서 재생성할 캐시와, 커밋된 상태를 복구해야 하는 저장소는 유실에 대한 요구가 다르다. | [캐시에서 저장소로](src/main/java/mapstorage/storage/README.md) |
+| put으로 한 키의 값 교체 | 두 put이 하나의 성공·실패 단위가 되지는 않는다. HashMap 자체에는 스레드 안전성도 없다. | [동시성](src/main/java/mapstorage/concurrency/README.md) → [원자적 이체](src/main/java/mapstorage/storage/atomic/README.md) |
+
+HashMap에서는 키 계약, 조회/교체, 충돌, 확장의 의미를 설명할 수 있으면 다음 단계로 간다.
+비트 연산과 트리 내부는 성능을 더 이해하기 위한 심화다. remove의 모든 분기나
+레드-블랙 트리 회전을 끝까지 외우는 것은 캐시·트랜잭션 학습의 선행 조건이 아니다.
+TreeMap도 선택 심화이며 HashMap 버킷의 TreeNode와 별도 구현이다.
+
+현재 패키지에 RDB 트랜잭션 실행 실험은 없다. 마지막 문서의
+[RDB로 이어지는 비교와 실습 질문](src/main/java/mapstorage/storage/README.md#rdb-트랜잭션과-비교하기)을
+다음 학습의 출발점으로 삼는다.
+
 패키지는 `src/main/java/mapstorage/` 아래에 있고 테스트는 동일 경로의
 `src/test/java/`에 있다. 뒤의 패키지는 해당 학습 커밋에서 추가된다.
 
