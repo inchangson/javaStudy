@@ -50,7 +50,19 @@ TreeMap도 선택 심화이며 HashMap 버킷의 TreeNode와 별도 구현이다
 ./gradlew :topics:map-storage:test --tests 'mapstorage.hashmap.*'
 ```
 
-IDE에서 각 Demo의 main을 실행하고, README의 중단점에 들어가 호출을 따라간다.
+IDE에서 각 Demo의 main을 실행하거나 아래 명령을 사용하고, 패키지 README의 중단점에 들어가 호출을 따라간다.
+
+```bash
+./gradlew :topics:map-storage:runDemo -Pdemo=mapstorage.hashmap.HashMapDemo
+./gradlew :topics:map-storage:runDemo -Pdemo=mapstorage.concurrency.CounterDemo
+./gradlew :topics:map-storage:runDemo -Pdemo=mapstorage.cache.lru.LruDemo
+./gradlew :topics:map-storage:runDemo -Pdemo=mapstorage.cache.caffeine.CaffeineDemo
+./gradlew :topics:map-storage:runDemo -Pdemo=mapstorage.storage.atomic.AtomicDemo
+./gradlew :topics:map-storage:runDemo -Pdemo=mapstorage.storage.recovery.RecoveryDemo -Pwal=/tmp/map-balances.wal
+```
+
+runDemo 작업은 전체 과정을 정리하는 마지막 소주제 커밋에서 추가된다.
+이전 커밋에서는 IDE의 main 실행과 각 패키지의 테스트 명령을 사용한다.
 문서의 JDK 내부 설명은 OpenJDK `jdk-21+35` 기준이다. 설치된 JDK 패치 버전에
 따라 줄 번호가 달라질 수 있어 메서드와 분기 조건으로 위치를 찾는다.
 내부 구조 검증에 필요한 `--add-opens`는 HashMap 테스트 작업에 설정한다.
@@ -58,3 +70,34 @@ IDE에서 각 Demo의 main을 실행하고, README의 중단점에 들어가 호
 
 커밋 날짜는 학습용으로 구성한 일정이며 실제 작업 시각을 뜻하지 않는다.
 2026-07-30부터 1~3일 간격으로 진행하고 평일 시각은 Asia/Seoul 20시 이후로 맞춘다.
+
+## 패키지별 읽을 문서와 학습 일정
+
+| 날짜 (KST) | 문서 | 확인할 결과 |
+| --- | --- | --- |
+| 07-30 목 21:17:42 | [HashMap](src/main/java/mapstorage/hashmap/README.md) | 충돌·교체·가변 키·리사이즈·트리화 |
+| 08-01 토 20:34:15 | [동시성](src/main/java/mapstorage/concurrency/README.md) | 갱신 유실·compute·두 키의 중간 상태 |
+| 08-03 월 21:09:05 | [LRU](src/main/java/mapstorage/cache/lru/README.md) | 읽기로 바뀌는 순서와 모니터 |
+| 08-04 화 21:18:32 | [Caffeine](src/main/java/mapstorage/cache/caffeine/README.md) | 데이터 게시·정책 정리·만료 |
+| 08-07 금 21:17:25 | [원자적 이체](src/main/java/mapstorage/storage/atomic/README.md) | 롤백과 독자 차단 |
+| 08-10 월 21:39:51 | [로그 복구](src/main/java/mapstorage/storage/recovery/README.md) | 커밋 전후 강제 종료와 redo |
+
+간격 2, 2, 1, 3, 3일은 seed=7302026의 난수 일정으로 구성했다.
+기존 커밋에는 이 일정보다 늦은 날짜도 있으므로 날짜 정렬 대신 부모 연결 순서로 따라간다.
+기존 커밋의 시각이나 내용은 변경하지 않는다.
+
+```bash
+git log --reverse --format='%h %aI %s' -- topics/map-storage
+```
+
+별도의 작업 디렉터리에서 해당 해시를 확인하려면 아래와 같이 실행한다.
+현재 작업 디렉터리의 미커밋 변경을 옮길 필요가 없다.
+
+```bash
+git worktree add --detach /tmp/map-lesson <위에서-고른-커밋-해시>
+cd /tmp/map-lesson
+./gradlew :topics:map-storage:test
+```
+
+각 패키지에서 결과를 먼저 예측하고, 테스트를 실행하고, 실제 라이브러리 메서드로
+Step Into한 뒤 문서의 다음 질문에 답한다. 구현 관찰과 공개 API 보장 범위를 구분한다.

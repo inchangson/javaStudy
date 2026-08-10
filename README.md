@@ -12,6 +12,7 @@ Java 서적, OOP, 리팩터링, 문법 변화, 동시성 기능을 실행 가능
 topics/
   oop/
   virtual-thread/
+  map-storage/
 templates/
   topic/
 notes/
@@ -23,6 +24,8 @@ notes/
 - `src/jmh/java`: 성능 비교용 JMH 벤치마크
 - `templates/topic`: 새 주제를 만들 때 복사하는 기본 템플릿
 - `notes`: 코드와 분리해서 보관할 책/강의 메모
+
+Map → 캐시 → 작은 저장소의 구현과 호출 흐름은 [학습 가이드](topics/map-storage/README.md)를 참고합니다.
 
 ## 실행
 

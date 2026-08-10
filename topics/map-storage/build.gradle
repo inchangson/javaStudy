@@ -6,3 +6,20 @@ tasks.withType(Test).configureEach {
 dependencies {
     implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
 }
+
+tasks.withType(Test).configureEach {
+    // Explicit classpath for the crash-test child JVM, independent of Gradle's worker launcher.
+    systemProperty 'study.crash.classpath', sourceSets.test.runtimeClasspath.asPath
+}
+
+tasks.register('runDemo', JavaExec) {
+    group = 'application'
+    description = 'Run a lesson with -Pdemo=fully.qualified.Class; recovery also uses -Pwal=/path/to/file'
+    javaLauncher = javaToolchains.launcherFor(java.toolchain)
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = providers.gradleProperty('demo').orElse('mapstorage.hashmap.HashMapDemo')
+    def walPath = providers.gradleProperty('wal')
+    if (walPath.isPresent()) {
+        args walPath.get()
+    }
+}
