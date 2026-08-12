@@ -1,0 +1,6 @@
+tasks.register('runDemo', JavaExec) {
+    group = 'application'
+    javaLauncher = javaToolchains.launcherFor(java.toolchain)
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = providers.gradleProperty('demo').orElse('poolstudy.semaphore.SemaphoreDemo')
+}

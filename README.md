@@ -13,6 +13,7 @@ topics/
   oop/
   virtual-thread/
   map-storage/
+  connection-pool/
 templates/
   topic/
 notes/
@@ -26,6 +27,8 @@ notes/
 - `notes`: 코드와 분리해서 보관할 책/강의 메모
 
 Map → 캐시 → 작은 저장소의 구현과 호출 흐름은 [학습 가이드](topics/map-storage/README.md)를 참고합니다.
+
+Semaphore → 객체 풀 → HikariCP·Lettuce 비교는 [연결 풀 학습 가이드](topics/connection-pool/README.md)를 참고합니다.
 
 ## 실행
 
