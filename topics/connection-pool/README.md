@@ -11,7 +11,7 @@ Java 21로 실행하며 외부 라이브러리는 각 단계에서 버전을 고
 | 단계 | 일정 (+09:00) | 내용 |
 |---|---|---|
 | 01 | 08-12 21:48:23 | [Semaphore](src/main/java/poolstudy/semaphore/README.md): 허가 수와 소유권 |
-| 02 | 08-14 21:59:41 | 작은 객체 풀: lease, 시간 제한, 종료 |
+| 02 | 08-14 21:59:41 | [작은 객체 풀](src/main/java/poolstudy/tiny/README.md): lease, 시간 제한, 종료 |
 | 03 | 08-16 21:07:49 | Commons Pool: 생성·검증·반환·폐기 |
 | 04 | 08-17 21:18:23 | HikariCP: ConcurrentBag과 JDBC proxy |
 | 05 | 08-20 21:52:38 | Lettuce: Commons 기반 동기 풀과 비동기 풀 |
