@@ -14,7 +14,7 @@ Java 21로 실행하며 외부 라이브러리는 각 단계에서 버전을 고
 | 02 | 08-14 21:59:41 | [작은 객체 풀](src/main/java/poolstudy/tiny/README.md): lease, 시간 제한, 종료 |
 | 03 | 08-16 21:07:49 | [Commons Pool](src/main/java/poolstudy/commons/README.md): 생성·검증·반환·폐기 |
 | 04 | 08-17 21:18:23 | [HikariCP](src/main/java/poolstudy/hikari/README.md): ConcurrentBag과 JDBC proxy |
-| 05 | 08-20 21:52:38 | Lettuce: Commons 기반 동기 풀과 비동기 풀 |
+| 05 | 08-20 21:52:38 | [Lettuce](src/main/java/poolstudy/lettuce/README.md): Commons 기반 동기 풀과 비동기 풀 |
 | 06 | 08-23 21:03:40 | 크기 실험: 획득 대기와 자원 경합 분리 |
 
 ```bash
