@@ -16,6 +16,7 @@ H2 **2.3.232** 인메모리 DB를 사용하므로 DB 서버는 필요 없다. Hi
 3. `connectionBag.borrow(timeout, MILLISECONDS)`는 ThreadLocal 리스트에서 먼저 후보를 꺼내 `STATE_NOT_IN_USE → STATE_IN_USE` CAS를 시도한다. 실패하면 sharedList를 스캔한다. **ThreadLocal은 소유권 보장이 아니라 빠른 후보 탐색**이다. 같은 entry가 다른 스레드에서 이미 대여되었을 수 있으므로 CAS가 필요하다.
 4. 그래도 없으면 waiters를 증가시킨 상태로 listener.addBagItem을 요청하고 `handoffQueue.poll`로 남은 시간을 기다린다. handoffQueue는 fair `SynchronousQueue`다. 객체 저장소는 sharedList이고 handoff는 반환자·대기자의 전달 통로다. 전체 대여 API가 FIFO라는 뜻은 아니다. 빠른 ThreadLocal/shared 경로는 별도로 존재한다.
 5. listener는 `HikariPool.addBagItem → addConnectionExecutor → PoolEntryCreator`로 이어진다. `shouldContinueCreating`이 maximumPoolSize, minimumIdle, 대기자 수와 idle 수를 보고 생성 여부를 정한다. maximumPoolSize를 늘리는 것은 상한을 올리는 것이지 모든 요청에 연결을 즉시 제공하는 명령이 아니다.
+   새 물리 연결은 `createPoolEntry → PoolBase.newPoolEntry → newConnection → dataSource.getConnection`으로 만든다. 이 예제의 jdbcUrl 설정은 DriverDataSource를 사용하여 `driver.connect → H2 Driver.connect`로 이어진다. 초기 JDBC 상태 설정과 유효성 확인이 성공해야 PoolEntry가 bag에 들어온다.
 6. bag에서 받은 entry가 eviction 대상이거나 검증에 실패하면 `closeConnection`으로 제거·종료하고 남은 시간으로 재시도한다. 최근 사용한 연결은 aliveBypassWindow 조건에 따라 검증을 생략할 수 있다. 성공하면 `PoolEntry.createProxyConnection → ProxyFactory.getProxyConnection`으로 새 JDBC proxy를 반환한다.
 7. 획득 실패는 `createTimeoutException → SQLTransientConnectionException`이다. 인터럽트는 플래그를 복구하고 SQLException으로 감싼다. connectionTimeout은 쿼리 실행 시간 제한이 아니다. 최초 초기화, driver 연결/검증, pool suspension도 각 경계를 따로 봐야 한다.
 

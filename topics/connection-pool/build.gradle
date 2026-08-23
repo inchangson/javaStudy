@@ -25,3 +25,20 @@ tasks.register('redisTest', Test) {
     useJUnitPlatform { includeTags 'redis' }
     outputs.upToDateWhen { false }
 }
+
+configurations { lessonSources { transitive = false } }
+dependencies {
+    lessonSources 'org.apache.commons:commons-pool2:2.12.1:sources'
+    lessonSources 'com.zaxxer:HikariCP:6.3.0:sources'
+    lessonSources 'io.lettuce:lettuce-core:6.5.5.RELEASE:sources'
+    lessonSources 'com.h2database:h2:2.3.232:sources'
+}
+tasks.register('downloadSources', Copy) {
+    description = 'Download the exact library sources read by the lessons'
+    group = 'documentation'
+    from configurations.lessonSources
+    into layout.buildDirectory.dir('library-sources')
+}
+tasks.named('runDemo', JavaExec) {
+    systemProperty 'org.slf4j.simpleLogger.defaultLogLevel', 'warn'
+}
